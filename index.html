@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuition Tracker</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Tuition Tracker</h1>
+        
+        <!-- Add Student Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Add Student</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <input type="text" id="studentName" class="form-control" placeholder="Enter the Student's name">
+                </div>
+                <div class="form-group">
+                    <input type="number" id="numClasses" class="form-control" placeholder="Enter the number of classes">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="phoneNumber" class="form-control" placeholder="Enter the phone number (optional)">
+                </div>
+                <button class="btn btn-success" onclick="addStudent()">Add Student</button>
+            </div>
+        </div>
+
+        <!-- Student List Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Students</h2>
+            </div>
+            <div class="card-body">
+                <ul id="students" class="list-group"></ul>
+            </div>
+        </div>
+
+        <!-- Class Logging Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Log Classes</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <select id="studentSelect" class="form-control"></select>
+                </div>
+                <div id="classDates"></div>
+                <button class="btn btn-primary" onclick="startNewMonth()">Start A New Month</button>
+            </div>
+        </div>
+
+        <!-- Generate PDF Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Generate PDF Summary</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <select id="pdfStudentSelect" class="form-control"></select>
+                </div>
+                <button class="btn btn-info" onclick="generatePDF()">Generate PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
