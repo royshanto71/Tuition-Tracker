@@ -1,74 +1,718 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tuition Tracker</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tuition Tracker</title>
+  <style>
+    /* Base Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    
+    /* Header */
+    .header {
+      background-color: #f0d264;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .menu-icon {
+      font-size: 24px;
+      margin-right: 20px;
+    }
+    
+    .header-title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    /* Add Student Button */
+    .add-student-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #f0d264;
+      color: black;
+      padding: 15px 20px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .add-student-btn .plus {
+      margin-right: 10px;
+      font-size: 22px;
+    }
+    
+    /* Add Student Form */
+    .add-form {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f0d264;
+      padding: 20px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 400px;
+      z-index: 100;
+      display: none;
+    }
+    
+    .add-form input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-bottom: 1px solid #999;
+      background: transparent;
+      font-size: 16px;
+    }
+    
+    .add-form label {
+      display: block;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    
+    .add-form button {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 20px;
+      margin-top: 15px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    /* Student Card */
+    .student-card {
+      background-color: #ffb3b3;
+      margin: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .student-info {
+      display: flex;
+      align-items: center;
+    }
+    
+    .student-icon {
+      margin-right: 15px;
+      font-size: 20px;
+    }
+    
+    .student-name {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    
+    .student-classes {
+      color: #666;
+    }
+    
+    .call-icon {
+      font-size: 22px;
+    }
+    
+    /* Student Details Page */
+    .student-details {
+      background-color: #CC6666;
+      padding: 15px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 200;
+      display: none;
+      overflow-y: auto;
+    }
+    
+    .details-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 0 15px 0;
+      color: white;
+    }
+    
+    .back-icon {
+      font-size: 24px;
+      cursor: pointer;
+    }
+    
+    .calendar-icon {
+      font-size: 24px;
+    }
+    
+    .class-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .class-checkbox {
+      transform: scale(1.3);
+      margin-right: 10px;
+    }
+    
+    .class-name {
+      flex-grow: 1;
+      font-size: 16px;
+      padding-left: 5px;
+    }
+    
+    .date-picker-btn {
+      background-color: #CC6666;
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .bottom-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      position: fixed;
+      bottom: 20px;
+      left: 15px;
+      right: 15px;
+    }
+    
+    .bottom-btn {
+      background-color: #CC6666;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 50%;
+      font-size: 16px;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .new-month-btn {
+      flex-grow: 1;
+      margin: 0 10px;
+      border-radius: 30px;
+      width: auto;
+      height: auto;
+    }
+    
+    /* Date Picker Modal */
+    .date-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 300;
+      display: none;
+    }
+    
+    .date-modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      width: 90%;
+      max-width: 320px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    .date-header {
+      background-color: #ffb3b3;
+      padding: 15px;
+      text-align: center;
+    }
+    
+    .date-buttons {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px;
+    }
+    
+    .date-btn {
+      background-color: #CC6666;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    
+    /* Calendar */
+    .calendar {
+      padding: 10px;
+    }
+    
+    .calendar-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .calendar-month {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    .calendar-nav {
+      display: flex;
+    }
+    
+    .calendar-nav button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0 10px;
+    }
+    
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      text-align: center;
+    }
+    
+    .calendar-day {
+      padding: 10px 0;
+    }
+    
+    .calendar-day.selected {
+      background-color: #CC6666;
+      color: white;
+      border-radius: 50%;
+    }
+    
+    .calendar-weekday {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 50;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Tuition Tracker</h1>
-        
-        <!-- Add Student Section -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2>Add Student</h2>
-            </div>
-            <div class="card-body">
-                <div class="form-group">
-                    <input type="text" id="studentName" class="form-control" placeholder="Enter the Student's name">
-                </div>
-                <div class="form-group">
-                    <input type="number" id="numClasses" class="form-control" placeholder="Enter the number of classes">
-                </div>
-                <div class="form-group">
-                    <input type="text" id="phoneNumber" class="form-control" placeholder="Enter the phone number (optional)">
-                </div>
-                <button class="btn btn-success" onclick="addStudent()">Add Student</button>
-            </div>
-        </div>
-
-        <!-- Student List Section -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2>Students</h2>
-            </div>
-            <div class="card-body">
-                <ul id="students" class="list-group"></ul>
-            </div>
-        </div>
-
-        <!-- Class Logging Section -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2>Log Classes</h2>
-            </div>
-            <div class="card-body">
-                <div class="form-group">
-                    <select id="studentSelect" class="form-control"></select>
-                </div>
-                <div id="classDates"></div>
-                <button class="btn btn-primary" onclick="startNewMonth()">Start A New Month</button>
-            </div>
-        </div>
-
-        <!-- Generate PDF Section -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2>Generate PDF Summary</h2>
-            </div>
-            <div class="card-body">
-                <div class="form-group">
-                    <select id="pdfStudentSelect" class="form-control"></select>
-                </div>
-                <button class="btn btn-info" onclick="generatePDF()">Generate PDF</button>
-            </div>
-        </div>
+  <!-- Main Page -->
+  <div class="header">
+    <div class="menu-icon">☰</div>
+    <div class="header-title">Tuition Tracker</div>
+  </div>
+  
+  <div id="student-list"></div>
+  
+  <div class="add-student-btn" id="add-btn">
+    <span class="plus">+</span>
+    <span>Add Student</span>
+  </div>
+  
+  <!-- Add Student Form -->
+  <div class="add-form" id="add-form">
+    <label>Enter the Student's name</label>
+    <input type="text" id="student-name">
+    
+    <label>Enter the number of classes</label>
+    <input type="number" id="class-count">
+    
+    <label>Enter the phone number (optional)</label>
+    <input type="tel" id="phone-number">
+    
+    <button id="add-submit">Add</button>
+  </div>
+  
+  <!-- Student Details Page -->
+  <div class="student-details" id="student-details">
+    <div class="details-header">
+      <div class="back-icon" id="back-btn">←</div>
+      <div class="student-title" id="detail-name">John Doe</div>
+      <div class="calendar-icon">📅</div>
     </div>
+    
+    <div id="class-list"></div>
+    
+    <div class="bottom-buttons">
+      <button class="bottom-btn">💳</button>
+      <button class="bottom-btn new-month-btn">Start A New Month</button>
+      <button class="bottom-btn">↗</button>
+    </div>
+  </div>
+  
+  <!-- Date Picker Modal -->
+  <div class="date-modal" id="date-modal">
+    <div class="date-modal-content">
+      <div class="date-header" id="date-modal-title">
+        Select date
+      </div>
+      
+      <div class="calendar">
+        <div class="calendar-controls">
+          <div class="calendar-month" id="calendar-month">February 2025</div>
+          <div class="calendar-nav">
+            <button id="prev-month">‹</button>
+            <button id="next-month">›</button>
+          </div>
+        </div>
+        
+        <div class="calendar-grid" id="calendar-weekdays">
+          <div class="calendar-weekday">S</div>
+          <div class="calendar-weekday">M</div>
+          <div class="calendar-weekday">T</div>
+          <div class="calendar-weekday">W</div>
+          <div class="calendar-weekday">T</div>
+          <div class="calendar-weekday">F</div>
+          <div class="calendar-weekday">S</div>
+        </div>
+        
+        <div class="calendar-grid" id="calendar-days"></div>
+      </div>
+      
+      <div class="date-buttons">
+        <button class="date-btn" id="cancel-date">Cancel</button>
+        <button class="date-btn" id="ok-date">OK</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="overlay" id="overlay"></div>
+  
+  <script>
+    // Store students data
+let students = [];
+let currentStudentIndex = -1;
+let selectedDate = new Date();
+let currentDateButton = null;
+let modalTitle = '';
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="script.js"></script>
+// DOM Elements
+const studentList = document.getElementById('student-list');
+const addBtn = document.getElementById('add-btn');
+const addForm = document.getElementById('add-form');
+const addSubmit = document.getElementById('add-submit');
+const studentNameInput = document.getElementById('student-name');
+const classCountInput = document.getElementById('class-count');
+const phoneNumberInput = document.getElementById('phone-number');
+const studentDetails = document.getElementById('student-details');
+const backBtn = document.getElementById('back-btn');
+const detailName = document.getElementById('detail-name');
+const classList = document.getElementById('class-list');
+const dateModal = document.getElementById('date-modal');
+const cancelDate = document.getElementById('cancel-date');
+const okDate = document.getElementById('ok-date');
+const overlay = document.getElementById('overlay');
+const dateModalTitle = document.getElementById('date-modal-title');
+const calendarMonth = document.getElementById('calendar-month');
+const calendarDays = document.getElementById('calendar-days');
+const prevMonth = document.getElementById('prev-month');
+const nextMonth = document.getElementById('next-month');
+
+// Load data from localStorage on startup
+function loadStudentsData() {
+  const savedStudents = localStorage.getItem('tuitionTrackerStudents');
+  if (savedStudents) {
+    students = JSON.parse(savedStudents);
+  }
+}
+
+// Save data to localStorage
+function saveStudentsData() {
+  localStorage.setItem('tuitionTrackerStudents', JSON.stringify(students));
+}
+
+// Event Listeners
+addBtn.addEventListener('click', showAddForm);
+addSubmit.addEventListener('click', addStudent);
+backBtn.addEventListener('click', hideStudentDetails);
+cancelDate.addEventListener('click', hideDateModal);
+okDate.addEventListener('click', confirmDate);
+prevMonth.addEventListener('click', () => navigateMonth(-1));
+nextMonth.addEventListener('click', () => navigateMonth(1));
+
+// Show add student form
+function showAddForm() {
+  addForm.style.display = 'block';
+  overlay.style.display = 'block';
+}
+
+// Hide add student form
+function hideAddForm() {
+  addForm.style.display = 'none';
+  overlay.style.display = 'none';
+  studentNameInput.value = '';
+  classCountInput.value = '';
+  phoneNumberInput.value = '';
+}
+
+// Add new student
+function addStudent() {
+  const name = studentNameInput.value.trim();
+  const classCount = parseInt(classCountInput.value) || 0;
+  const phone = phoneNumberInput.value.trim();
+  
+  if (name) {
+    const student = {
+      name: name,
+      phone: phone,
+      classes: classCount,
+      classesTaken: 0,
+      classDates: Array(classCount).fill(null)
+    };
+    
+    students.push(student);
+    saveStudentsData(); // Save after adding a student
+    renderStudentList();
+    hideAddForm();
+  }
+}
+
+// Render student list
+function renderStudentList() {
+  studentList.innerHTML = '';
+  
+  students.forEach((student, index) => {
+    const card = document.createElement('div');
+    card.className = 'student-card';
+    card.innerHTML = `
+      <div class="student-info">
+        <div class="student-icon">👤</div>
+        <div>
+          <div class="student-name">${student.name}</div>
+          <div class="student-classes">${student.classesTaken} classes taken</div>
+        </div>
+      </div>
+      <div class="call-icon">📞</div>
+    `;
+    
+    card.addEventListener('click', () => showStudentDetails(index));
+    studentList.appendChild(card);
+  });
+}
+
+// Show student details
+function showStudentDetails(index) {
+  currentStudentIndex = index;
+  const student = students[index];
+  
+  detailName.textContent = student.name;
+  renderClassList(student);
+  
+  studentDetails.style.display = 'block';
+}
+
+// Hide student details
+function hideStudentDetails() {
+  studentDetails.style.display = 'none';
+}
+
+// Render class list
+function renderClassList(student) {
+  classList.innerHTML = '';
+  
+  for (let i = 0; i < student.classes; i++) {
+    const classItem = document.createElement('div');
+    classItem.className = 'class-item';
+    
+    const dateBtnText = student.classDates[i] ? 
+      formatDate(new Date(student.classDates[i])) : 'Date_Picker';
+    
+    classItem.innerHTML = `
+      <input type="checkbox" class="class-checkbox" ${student.classDates[i] ? 'checked' : ''}>
+      <div class="class-name">${i+1}${getOrdinal(i+1)} class</div>
+      <button class="date-picker-btn" data-index="${i}">${dateBtnText}</button>
+    `;
+    
+    // Add date picker event
+    const dateBtn = classItem.querySelector('.date-picker-btn');
+    dateBtn.addEventListener('click', (e) => {
+      showDateModal(e.target, i, 'Select date');
+    });
+    
+    // Add checkbox event
+    const checkbox = classItem.querySelector('.class-checkbox');
+    checkbox.addEventListener('change', (e) => {
+      if (e.target.checked && !student.classDates[i]) {
+        showDateModal(dateBtn, i, 'Select date');
+      } else if (!e.target.checked) {
+        student.classDates[i] = null;
+        dateBtn.textContent = 'Date_Picker';
+        updateStudentClassesTaken(student);
+      }
+    });
+    
+    classList.appendChild(classItem);
+  }
+}
+
+// Show date modal
+function showDateModal(button, classIndex, title) {
+  currentDateButton = button;
+  modalTitle = title;
+  dateModalTitle.textContent = title;
+  
+  // Initialize calendar
+  selectedDate = new Date();
+  updateCalendar();
+  
+  dateModal.style.display = 'block';
+}
+
+// Hide date modal
+function hideDateModal() {
+  dateModal.style.display = 'none';
+  
+  // If checkbox was checked but no date was selected, uncheck it
+  if (currentDateButton && currentDateButton.textContent === 'Date_Picker') {
+    const classItem = currentDateButton.closest('.class-item');
+    const checkbox = classItem.querySelector('.class-checkbox');
+    checkbox.checked = false;
+  }
+}
+
+// Confirm selected date
+function confirmDate() {
+  if (currentDateButton) {
+    const index = parseInt(currentDateButton.getAttribute('data-index'));
+    const student = students[currentStudentIndex];
+    
+    student.classDates[index] = selectedDate.toISOString();
+    currentDateButton.textContent = formatDate(selectedDate);
+    
+    const classItem = currentDateButton.closest('.class-item');
+    const checkbox = classItem.querySelector('.class-checkbox');
+    checkbox.checked = true;
+    
+    updateStudentClassesTaken(student);
+    saveStudentsData(); // Save after updating class date
+  }
+  
+  hideDateModal();
+}
+
+// Update calendar display
+function updateCalendar() {
+  const year = selectedDate.getFullYear();
+  const month = selectedDate.getMonth();
+  
+  calendarMonth.textContent = `${getMonthName(month)} ${year}`;
+  
+  // Clear previous days
+  calendarDays.innerHTML = '';
+  
+  // Get first day of month and number of days
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const daysInMonth = lastDay.getDate();
+  const firstDayIndex = firstDay.getDay();
+  
+  // Add empty cells for days before first day of month
+  for (let i = 0; i < firstDayIndex; i++) {
+    const dayEl = document.createElement('div');
+    dayEl.className = 'calendar-day';
+    calendarDays.appendChild(dayEl);
+  }
+  
+  // Add days of month
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayEl = document.createElement('div');
+    dayEl.className = 'calendar-day';
+    dayEl.textContent = day;
+    
+    // Mark selected date
+    if (day === selectedDate.getDate() && 
+        month === selectedDate.getMonth() && 
+        year === selectedDate.getFullYear()) {
+      dayEl.classList.add('selected');
+    }
+    
+    dayEl.addEventListener('click', () => {
+      // Remove selected class from all days
+      document.querySelectorAll('.calendar-day.selected').forEach(el => {
+        el.classList.remove('selected');
+      });
+      
+      // Add selected class to clicked day
+      dayEl.classList.add('selected');
+      
+      // Update selected date
+      selectedDate = new Date(year, month, day);
+    });
+    
+    calendarDays.appendChild(dayEl);
+  }
+}
+
+// Navigate to previous/next month
+function navigateMonth(direction) {
+  const newDate = new Date(selectedDate);
+  newDate.setMonth(newDate.getMonth() + direction);
+  selectedDate = newDate;
+  updateCalendar();
+}
+
+// Update student's classes taken count
+function updateStudentClassesTaken(student) {
+  student.classesTaken = student.classDates.filter(date => date !== null).length;
+  saveStudentsData(); // Save after updating classes taken
+  renderStudentList();
+}
+
+// Helper functions
+function formatDate(date) {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}`;
+}
+
+function getMonthName(month) {
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                  'July', 'August', 'September', 'October', 'November', 'December'];
+  return months[month];
+}
+
+function getOrdinal(n) {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+// Initialize app
+loadStudentsData(); // Load data from localStorage when page loads
+renderStudentList();
+  </script>
 </body>
 </html>
