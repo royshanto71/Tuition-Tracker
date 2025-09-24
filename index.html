@@ -757,7 +757,8 @@
         // Supabase Configuration
         const SUPABASE_URL = 'https://uxigkgflpziqkqjdhdkw.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4aWdrZ2ZscHppcWtxamRoZGt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3NDk3NTUsImV4cCI6MjA3NDMyNTc1NX0.YVFVLEEud4iwyKIO-UaSoxV0F_rKDYMSalA816VBGz8';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Application State
         let currentUser = null;
@@ -789,7 +790,7 @@
 
         // Authentication Functions
         async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 currentUser = session.user;
                 showApp();
@@ -837,7 +838,7 @@
             });
 
             // Listen for auth changes
-            supabase.auth.onAuthStateChange((event, session) => {
+            supabaseClient.auth.onAuthStateChange((event, session) => {
                 if (event === 'SIGNED_IN') {
                     currentUser = session.user;
                     showApp();
@@ -854,7 +855,7 @@
             const password = document.getElementById('login-password').value;
 
             try {
-                const { error } = await supabase.auth.signInWithPassword({
+                const { error } = await supabaseClient.auth.signInWithPassword({
                     email,
                     password
                 });
@@ -874,7 +875,7 @@
             const password = document.getElementById('signup-password').value;
 
             try {
-                const { error } = await supabase.auth.signUp({
+                const { error } = await supabaseClient.auth.signUp({
                     email,
                     password,
                     options: {
@@ -893,7 +894,7 @@
         }
 
         async function handleLogout() {
-            await supabase.auth.signOut();
+            await supabaseClient.auth.signOut();
         }
 
         function showMessage(message, type) {
@@ -908,7 +909,7 @@
             try {
                 studentsContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading students...</div>';
                 
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('students')
                     .select('*')
                     .eq('user_id', currentUser.id)
