@@ -784,17 +784,30 @@
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', async () => {
+            console.log('App initializing...'); // Debug log
+            console.log('Supabase client:', supabaseClient); // Debug log
+            
             await checkAuth();
             setupEventListeners();
         });
 
         // Authentication Functions
         async function checkAuth() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                showApp();
-            } else {
+            try {
+                console.log('Checking authentication...'); // Debug log
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                console.log('Current session:', session); // Debug log
+                
+                if (session) {
+                    currentUser = session.user;
+                    console.log('User authenticated:', currentUser); // Debug log
+                    showApp();
+                } else {
+                    console.log('No authenticated user'); // Debug log
+                    showAuth();
+                }
+            } catch (error) {
+                console.error('Error checking auth:', error); // Debug log
                 showAuth();
             }
         }
@@ -854,16 +867,23 @@
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
+            console.log('Attempting login with:', email); // Debug log
+
             try {
-                const { error } = await supabaseClient.auth.signInWithPassword({
+                showMessage('Signing in...', 'success');
+                
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email,
                     password
                 });
+
+                console.log('Login response:', { data, error }); // Debug log
 
                 if (error) throw error;
                 
                 showMessage('Login successful!', 'success');
             } catch (error) {
+                console.error('Login error:', error); // Debug log
                 showMessage(error.message, 'error');
             }
         }
@@ -874,8 +894,12 @@
             const email = document.getElementById('signup-email').value;
             const password = document.getElementById('signup-password').value;
 
+            console.log('Attempting signup with:', { name, email }); // Debug log
+
             try {
-                const { error } = await supabaseClient.auth.signUp({
+                showMessage('Creating account...', 'success');
+                
+                const { data, error } = await supabaseClient.auth.signUp({
                     email,
                     password,
                     options: {
@@ -885,10 +909,17 @@
                     }
                 });
 
+                console.log('Signup response:', { data, error }); // Debug log
+
                 if (error) throw error;
                 
-                showMessage('Account created! Please check your email for verification.', 'success');
+                if (data.user && !data.user.email_confirmed_at) {
+                    showMessage('Account created! Please check your email for verification link.', 'success');
+                } else {
+                    showMessage('Account created successfully! You can now sign in.', 'success');
+                }
             } catch (error) {
+                console.error('Signup error:', error); // Debug log
                 showMessage(error.message, 'error');
             }
         }
