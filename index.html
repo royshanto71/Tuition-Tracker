@@ -1,718 +1,931 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tuition Tracker</title>
-  <style>
-    /* Base Styles */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
-    }
-    
-    /* Header */
-    .header {
-      background-color: #f0d264;
-      padding: 15px;
-      display: flex;
-      align-items: center;
-    }
-    
-    .menu-icon {
-      font-size: 24px;
-      margin-right: 20px;
-    }
-    
-    .header-title {
-      font-size: 24px;
-      font-weight: bold;
-    }
-    
-    /* Add Student Button */
-    .add-student-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #f0d264;
-      color: black;
-      padding: 15px 20px;
-      border-radius: 40px;
-      display: flex;
-      align-items: center;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    
-    .add-student-btn .plus {
-      margin-right: 10px;
-      font-size: 22px;
-    }
-    
-    /* Add Student Form */
-    .add-form {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #f0d264;
-      padding: 20px;
-      border-radius: 15px;
-      width: 80%;
-      max-width: 400px;
-      z-index: 100;
-      display: none;
-    }
-    
-    .add-form input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: none;
-      border-bottom: 1px solid #999;
-      background: transparent;
-      font-size: 16px;
-    }
-    
-    .add-form label {
-      display: block;
-      font-weight: bold;
-      margin-top: 15px;
-    }
-    
-    .add-form button {
-      background-color: #333;
-      color: white;
-      border: none;
-      padding: 10px 25px;
-      border-radius: 20px;
-      margin-top: 15px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    
-    /* Student Card */
-    .student-card {
-      background-color: #ffb3b3;
-      margin: 15px;
-      padding: 15px;
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .student-info {
-      display: flex;
-      align-items: center;
-    }
-    
-    .student-icon {
-      margin-right: 15px;
-      font-size: 20px;
-    }
-    
-    .student-name {
-      font-weight: bold;
-      font-size: 18px;
-    }
-    
-    .student-classes {
-      color: #666;
-    }
-    
-    .call-icon {
-      font-size: 22px;
-    }
-    
-    /* Student Details Page */
-    .student-details {
-      background-color: #CC6666;
-      padding: 15px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 200;
-      display: none;
-      overflow-y: auto;
-    }
-    
-    .details-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 0 15px 0;
-      color: white;
-    }
-    
-    .back-icon {
-      font-size: 24px;
-      cursor: pointer;
-    }
-    
-    .calendar-icon {
-      font-size: 24px;
-    }
-    
-    .class-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    .class-checkbox {
-      transform: scale(1.3);
-      margin-right: 10px;
-    }
-    
-    .class-name {
-      flex-grow: 1;
-      font-size: 16px;
-      padding-left: 5px;
-    }
-    
-    .date-picker-btn {
-      background-color: #CC6666;
-      border: none;
-      color: white;
-      padding: 8px 15px;
-      border-radius: 20px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    
-    .bottom-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-      position: fixed;
-      bottom: 20px;
-      left: 15px;
-      right: 15px;
-    }
-    
-    .bottom-btn {
-      background-color: #CC6666;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 50%;
-      font-size: 16px;
-      width: 45px;
-      height: 45px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
-    
-    .new-month-btn {
-      flex-grow: 1;
-      margin: 0 10px;
-      border-radius: 30px;
-      width: auto;
-      height: auto;
-    }
-    
-    /* Date Picker Modal */
-    .date-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 300;
-      display: none;
-    }
-    
-    .date-modal-content {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: white;
-      width: 90%;
-      max-width: 320px;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    
-    .date-header {
-      background-color: #ffb3b3;
-      padding: 15px;
-      text-align: center;
-    }
-    
-    .date-buttons {
-      display: flex;
-      justify-content: space-between;
-      padding: 15px;
-    }
-    
-    .date-btn {
-      background-color: #CC6666;
-      color: white;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-    
-    /* Calendar */
-    .calendar {
-      padding: 10px;
-    }
-    
-    .calendar-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    
-    .calendar-month {
-      font-weight: bold;
-      font-size: 16px;
-    }
-    
-    .calendar-nav {
-      display: flex;
-    }
-    
-    .calendar-nav button {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 0 10px;
-    }
-    
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-      text-align: center;
-    }
-    
-    .calendar-day {
-      padding: 10px 0;
-    }
-    
-    .calendar-day.selected {
-      background-color: #CC6666;
-      color: white;
-      border-radius: 50%;
-    }
-    
-    .calendar-weekday {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 50;
-      display: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuitionPro - Professional Tuition Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #16a34a;
+            --danger-color: #dc2626;
+            --warning-color: #ea580c;
+            --background-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Authentication Styles */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            padding: 1rem;
+        }
+
+        .auth-card {
+            background: var(--surface-color);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--surface-color);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--background-color);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .auth-switch button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: underline;
+        }
+
+        /* App Layout */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .app-logo h1 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .app-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .main-content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stat-card h3 {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Students Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .student-card {
+            background: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .student-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .student-card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .student-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .student-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .student-card-body {
+            padding: 1.5rem;
+        }
+
+        .progress-bar {
+            background: var(--border-color);
+            border-radius: 6px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success-color);
+            border-radius: 6px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Student Details */
+        .student-details {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background-color);
+            z-index: 900;
+            overflow-y: auto;
+        }
+
+        .student-details-header {
+            background: var(--surface-color);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .student-details-content {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .classes-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .class-item {
+            background: var(--surface-color);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            gap: 1rem;
+        }
+
+        .class-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--success-color);
+        }
+
+        .class-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .class-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .class-date {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .date-picker-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .date-picker-btn.empty {
+            background: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: var(--danger-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: var(--success-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .students-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+            }
+            
+            .fab {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Main Page -->
-  <div class="header">
-    <div class="menu-icon">☰</div>
-    <div class="header-title">Tuition Tracker</div>
-  </div>
-  
-  <div id="student-list"></div>
-  
-  <div class="add-student-btn" id="add-btn">
-    <span class="plus">+</span>
-    <span>Add Student</span>
-  </div>
-  
-  <!-- Add Student Form -->
-  <div class="add-form" id="add-form">
-    <label>Enter the Student's name</label>
-    <input type="text" id="student-name">
-    
-    <label>Enter the number of classes</label>
-    <input type="number" id="class-count">
-    
-    <label>Enter the phone number (optional)</label>
-    <input type="tel" id="phone-number">
-    
-    <button id="add-submit">Add</button>
-  </div>
-  
-  <!-- Student Details Page -->
-  <div class="student-details" id="student-details">
-    <div class="details-header">
-      <div class="back-icon" id="back-btn">←</div>
-      <div class="student-title" id="detail-name">John Doe</div>
-      <div class="calendar-icon">📅</div>
-    </div>
-    
-    <div id="class-list"></div>
-    
-    <div class="bottom-buttons">
-      <button class="bottom-btn">💳</button>
-      <button class="bottom-btn new-month-btn">Start A New Month</button>
-      <button class="bottom-btn">↗</button>
-    </div>
-  </div>
-  
-  <!-- Date Picker Modal -->
-  <div class="date-modal" id="date-modal">
-    <div class="date-modal-content">
-      <div class="date-header" id="date-modal-title">
-        Select date
-      </div>
-      
-      <div class="calendar">
-        <div class="calendar-controls">
-          <div class="calendar-month" id="calendar-month">February 2025</div>
-          <div class="calendar-nav">
-            <button id="prev-month">‹</button>
-            <button id="next-month">›</button>
-          </div>
+    <!-- Authentication Container -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1><i class="fas fa-graduation-cap"></i> TuitionPro</h1>
+                <p>Professional tuition management made simple</p>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </button>
+                <div class="auth-switch">
+                    Don't have an account? 
+                    <button type="button" id="show-signup">Sign up</button>
+                </div>
+            </form>
+            
+            <!-- Signup Form -->
+            <form id="signup-form" style="display: none;">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" class="form-control" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    Sign Up
+                </button>
+                <div class="auth-switch">
+                    Already have an account? 
+                    <button type="button" id="show-login">Sign in</button>
+                </div>
+            </form>
+            
+            <div id="auth-message"></div>
         </div>
-        
-        <div class="calendar-grid" id="calendar-weekdays">
-          <div class="calendar-weekday">S</div>
-          <div class="calendar-weekday">M</div>
-          <div class="calendar-weekday">T</div>
-          <div class="calendar-weekday">W</div>
-          <div class="calendar-weekday">T</div>
-          <div class="calendar-weekday">F</div>
-          <div class="calendar-weekday">S</div>
-        </div>
-        
-        <div class="calendar-grid" id="calendar-days"></div>
-      </div>
-      
-      <div class="date-buttons">
-        <button class="date-btn" id="cancel-date">Cancel</button>
-        <button class="date-btn" id="ok-date">OK</button>
-      </div>
     </div>
-  </div>
-  
-  <div class="overlay" id="overlay"></div>
-  
-  <script>
-    // Store students data
-let students = [];
-let currentStudentIndex = -1;
-let selectedDate = new Date();
-let currentDateButton = null;
-let modalTitle = '';
 
-// DOM Elements
-const studentList = document.getElementById('student-list');
-const addBtn = document.getElementById('add-btn');
-const addForm = document.getElementById('add-form');
-const addSubmit = document.getElementById('add-submit');
-const studentNameInput = document.getElementById('student-name');
-const classCountInput = document.getElementById('class-count');
-const phoneNumberInput = document.getElementById('phone-number');
-const studentDetails = document.getElementById('student-details');
-const backBtn = document.getElementById('back-btn');
-const detailName = document.getElementById('detail-name');
-const classList = document.getElementById('class-list');
-const dateModal = document.getElementById('date-modal');
-const cancelDate = document.getElementById('cancel-date');
-const okDate = document.getElementById('ok-date');
-const overlay = document.getElementById('overlay');
-const dateModalTitle = document.getElementById('date-modal-title');
-const calendarMonth = document.getElementById('calendar-month');
-const calendarDays = document.getElementById('calendar-days');
-const prevMonth = document.getElementById('prev-month');
-const nextMonth = document.getElementById('next-month');
+    <!-- Main Application -->
+    <div id="app-container" class="app-container">
+        <!-- App Header -->
+        <header class="app-header">
+            <div class="app-logo">
+                <i class="fas fa-graduation-cap" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+                <h1>TuitionPro</h1>
+            </div>
+            <nav class="app-nav">
+                <div class="user-info">
+                    <i class="fas fa-user"></i>
+                    <span id="user-name">User</span>
+                </div>
+                <button id="logout-btn" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </nav>
+        </header>
 
-// Load data from localStorage on startup
-function loadStudentsData() {
-  const savedStudents = localStorage.getItem('tuitionTrackerStudents');
-  if (savedStudents) {
-    students = JSON.parse(savedStudents);
-  }
-}
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Stats Dashboard -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Students</h3>
+                    <div class="stat-value" id="total-students">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Students</h3>
+                    <div class="stat-value" id="active-students">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Classes Completed</h3>
+                    <div class="stat-value" id="completed-classes">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Revenue</h3>
+                    <div class="stat-value" id="total-revenue">$0</div>
+                </div>
+            </div>
 
-// Save data to localStorage
-function saveStudentsData() {
-  localStorage.setItem('tuitionTrackerStudents', JSON.stringify(students));
-}
+            <!-- Students Section -->
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title">Students</h2>
+                </div>
+                <div id="students-container" class="students-grid">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading students...
+                    </div>
+                </div>
+            </section>
+        </main>
 
-// Event Listeners
-addBtn.addEventListener('click', showAddForm);
-addSubmit.addEventListener('click', addStudent);
-backBtn.addEventListener('click', hideStudentDetails);
-cancelDate.addEventListener('click', hideDateModal);
-okDate.addEventListener('click', confirmDate);
-prevMonth.addEventListener('click', () => navigateMonth(-1));
-nextMonth.addEventListener('click', () => navigateMonth(1));
+        <!-- Floating Action Button -->
+        <button id="add-student-fab" class="fab" title="Add New Student">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
 
-// Show add student form
-function showAddForm() {
-  addForm.style.display = 'block';
-  overlay.style.display = 'block';
-}
-
-// Hide add student form
-function hideAddForm() {
-  addForm.style.display = 'none';
-  overlay.style.display = 'none';
-  studentNameInput.value = '';
-  classCountInput.value = '';
-  phoneNumberInput.value = '';
-}
-
-// Add new student
-function addStudent() {
-  const name = studentNameInput.value.trim();
-  const classCount = parseInt(classCountInput.value) || 0;
-  const phone = phoneNumberInput.value.trim();
-  
-  if (name) {
-    const student = {
-      name: name,
-      phone: phone,
-      classes: classCount,
-      classesTaken: 0,
-      classDates: Array(classCount).fill(null)
-    };
-    
-    students.push(student);
-    saveStudentsData(); // Save after adding a student
-    renderStudentList();
-    hideAddForm();
-  }
-}
-
-// Render student list
-function renderStudentList() {
-  studentList.innerHTML = '';
-  
-  students.forEach((student, index) => {
-    const card = document.createElement('div');
-    card.className = 'student-card';
-    card.innerHTML = `
-      <div class="student-info">
-        <div class="student-icon">👤</div>
-        <div>
-          <div class="student-name">${student.name}</div>
-          <div class="student-classes">${student.classesTaken} classes taken</div>
+    <!-- Add/Edit Student Modal -->
+    <div id="student-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Add New Student</h3>
+                <button class="close-btn" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="student-form">
+                    <div class="form-group">
+                        <label for="student-name">Student Name</label>
+                        <input type="text" id="student-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="student-email">Email Address</label>
+                        <input type="email" id="student-email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="student-phone">Phone Number</label>
+                        <input type="tel" id="student-phone" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="total-classes">Total Classes</label>
+                        <input type="number" id="total-classes" class="form-control" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="class-fee">Fee per Class ($)</label>
+                        <input type="number" id="class-fee" class="form-control" min="0" step="0.01" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancel-student">Cancel</button>
+                <button type="submit" form="student-form" class="btn btn-primary" id="save-student">
+                    <i class="fas fa-save"></i>
+                    Save Student
+                </button>
+            </div>
         </div>
-      </div>
-      <div class="call-icon">📞</div>
-    `;
-    
-    card.addEventListener('click', () => showStudentDetails(index));
-    studentList.appendChild(card);
-  });
-}
+    </div>
 
-// Show student details
-function showStudentDetails(index) {
-  currentStudentIndex = index;
-  const student = students[index];
-  
-  detailName.textContent = student.name;
-  renderClassList(student);
-  
-  studentDetails.style.display = 'block';
-}
+    <!-- Student Details Page -->
+    <div id="student-details" class="student-details">
+        <div class="student-details-header">
+            <button class="back-btn" id="back-to-main">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div>
+                <h2 id="detail-student-name">Student Name</h2>
+                <p id="detail-student-info" style="color: var(--text-secondary); margin: 0;"></p>
+            </div>
+        </div>
+        <div class="student-details-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Classes Completed</h3>
+                    <div class="stat-value" id="detail-completed">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Classes Remaining</h3>
+                    <div class="stat-value" id="detail-remaining">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Paid</h3>
+                    <div class="stat-value" id="detail-paid">$0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Progress</h3>
+                    <div class="stat-value" id="detail-progress">0%</div>
+                </div>
+            </div>
+            
+            <div class="section-header">
+                <h3 class="section-title">Class Schedule</h3>
+            </div>
+            <div id="classes-list" class="classes-grid">
+                <!-- Classes will be dynamically generated -->
+            </div>
+        </div>
+    </div>
 
-// Hide student details
-function hideStudentDetails() {
-  studentDetails.style.display = 'none';
-}
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://uxigkgflpziqkqjdhdkw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4aWdrZ2ZscHppcWtxamRoZGt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3NDk3NTUsImV4cCI6MjA3NDMyNTc1NX0.YVFVLEEud4iwyKIO-UaSoxV0F_rKDYMSalA816VBGz8';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Render class list
-function renderClassList(student) {
-  classList.innerHTML = '';
-  
-  for (let i = 0; i < student.classes; i++) {
-    const classItem = document.createElement('div');
-    classItem.className = 'class-item';
-    
-    const dateBtnText = student.classDates[i] ? 
-      formatDate(new Date(student.classDates[i])) : 'Date_Picker';
-    
-    classItem.innerHTML = `
-      <input type="checkbox" class="class-checkbox" ${student.classDates[i] ? 'checked' : ''}>
-      <div class="class-name">${i+1}${getOrdinal(i+1)} class</div>
-      <button class="date-picker-btn" data-index="${i}">${dateBtnText}</button>
-    `;
-    
-    // Add date picker event
-    const dateBtn = classItem.querySelector('.date-picker-btn');
-    dateBtn.addEventListener('click', (e) => {
-      showDateModal(e.target, i, 'Select date');
-    });
-    
-    // Add checkbox event
-    const checkbox = classItem.querySelector('.class-checkbox');
-    checkbox.addEventListener('change', (e) => {
-      if (e.target.checked && !student.classDates[i]) {
-        showDateModal(dateBtn, i, 'Select date');
-      } else if (!e.target.checked) {
-        student.classDates[i] = null;
-        dateBtn.textContent = 'Date_Picker';
-        updateStudentClassesTaken(student);
-      }
-    });
-    
-    classList.appendChild(classItem);
-  }
-}
+        // Application State
+        let currentUser = null;
+        let students = [];
+        let currentStudentId = null;
 
-// Show date modal
-function showDateModal(button, classIndex, title) {
-  currentDateButton = button;
-  modalTitle = title;
-  dateModalTitle.textContent = title;
-  
-  // Initialize calendar
-  selectedDate = new Date();
-  updateCalendar();
-  
-  dateModal.style.display = 'block';
-}
+        // DOM Elements
+        const authContainer = document.getElementById('auth-container');
+        const appContainer = document.getElementById('app-container');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const authMessage = document.getElementById('auth-message');
+        const showSignup = document.getElementById('show-signup');
+        const showLogin = document.getElementById('show-login');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userNameSpan = document.getElementById('user-name');
+        const studentsContainer = document.getElementById('students-container');
+        const addStudentFab = document.getElementById('add-student-fab');
+        const studentModal = document.getElementById('student-modal');
+        const studentForm = document.getElementById('student-form');
+        const studentDetails = document.getElementById('student-details');
+        const backToMain = document.getElementById('back-to-main');
 
-// Hide date modal
-function hideDateModal() {
-  dateModal.style.display = 'none';
-  
-  // If checkbox was checked but no date was selected, uncheck it
-  if (currentDateButton && currentDateButton.textContent === 'Date_Picker') {
-    const classItem = currentDateButton.closest('.class-item');
-    const checkbox = classItem.querySelector('.class-checkbox');
-    checkbox.checked = false;
-  }
-}
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            setupEventListeners();
+        });
 
-// Confirm selected date
-function confirmDate() {
-  if (currentDateButton) {
-    const index = parseInt(currentDateButton.getAttribute('data-index'));
-    const student = students[currentStudentIndex];
-    
-    student.classDates[index] = selectedDate.toISOString();
-    currentDateButton.textContent = formatDate(selectedDate);
-    
-    const classItem = currentDateButton.closest('.class-item');
-    const checkbox = classItem.querySelector('.class-checkbox');
-    checkbox.checked = true;
-    
-    updateStudentClassesTaken(student);
-    saveStudentsData(); // Save after updating class date
-  }
-  
-  hideDateModal();
-}
+        // Authentication Functions
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                showApp();
+            } else {
+                showAuth();
+            }
+        }
 
-// Update calendar display
-function updateCalendar() {
-  const year = selectedDate.getFullYear();
-  const month = selectedDate.getMonth();
-  
-  calendarMonth.textContent = `${getMonthName(month)} ${year}`;
-  
-  // Clear previous days
-  calendarDays.innerHTML = '';
-  
-  // Get first day of month and number of days
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const daysInMonth = lastDay.getDate();
-  const firstDayIndex = firstDay.getDay();
-  
-  // Add empty cells for days before first day of month
-  for (let i = 0; i < firstDayIndex; i++) {
-    const dayEl = document.createElement('div');
-    dayEl.className = 'calendar-day';
-    calendarDays.appendChild(dayEl);
-  }
-  
-  // Add days of month
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dayEl = document.createElement('div');
-    dayEl.className = 'calendar-day';
-    dayEl.textContent = day;
-    
-    // Mark selected date
-    if (day === selectedDate.getDate() && 
-        month === selectedDate.getMonth() && 
-        year === selectedDate.getFullYear()) {
-      dayEl.classList.add('selected');
-    }
-    
-    dayEl.addEventListener('click', () => {
-      // Remove selected class from all days
-      document.querySelectorAll('.calendar-day.selected').forEach(el => {
-        el.classList.remove('selected');
-      });
-      
-      // Add selected class to clicked day
-      dayEl.classList.add('selected');
-      
-      // Update selected date
-      selectedDate = new Date(year, month, day);
-    });
-    
-    calendarDays.appendChild(dayEl);
-  }
-}
+        function showAuth() {
+            authContainer.style.display = 'flex';
+            appContainer.style.display = 'none';
+        }
 
-// Navigate to previous/next month
-function navigateMonth(direction) {
-  const newDate = new Date(selectedDate);
-  newDate.setMonth(newDate.getMonth() + direction);
-  selectedDate = newDate;
-  updateCalendar();
-}
+        async function showApp() {
+            authContainer.style.display = 'none';
+            appContainer.style.display = 'block';
+            userNameSpan.textContent = currentUser.user_metadata?.full_name || currentUser.email;
+            await loadStudents();
+            updateStats();
+        }
 
-// Update student's classes taken count
-function updateStudentClassesTaken(student) {
-  student.classesTaken = student.classDates.filter(date => date !== null).length;
-  saveStudentsData(); // Save after updating classes taken
-  renderStudentList();
-}
+        function setupEventListeners() {
+            // Auth Form Listeners
+            showSignup.addEventListener('click', () => {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+            });
 
-// Helper functions
-function formatDate(date) {
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  
-  return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}`;
-}
+            showLogin.addEventListener('click', () => {
+                signupForm.style.display = 'none';
+                loginForm.style.display = 'block';
+            });
 
-function getMonthName(month) {
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                  'July', 'August', 'September', 'October', 'November', 'December'];
-  return months[month];
-}
+            loginForm.addEventListener('submit', handleLogin);
+            signupForm.addEventListener('submit', handleSignup);
+            logoutBtn.addEventListener('click', handleLogout);
 
-function getOrdinal(n) {
-  const s = ['th', 'st', 'nd', 'rd'];
-  const v = n % 100;
-  return (s[(v - 20) % 10] || s[v] || s[0]);
-}
+            // App Listeners
+            addStudentFab.addEventListener('click', () => openStudentModal());
+            document.getElementById('close-modal').addEventListener('click', closeStudentModal);
+            document.getElementById('cancel-student').addEventListener('click', closeStudentModal);
+            studentForm.addEventListener('submit', handleSaveStudent);
+            backToMain.addEventListener('click', () => {
+                studentDetails.style.display = 'none';
+            });
 
-// Initialize app
-loadStudentsData(); // Load data from localStorage when page loads
-renderStudentList();
-  </script>
-</body>
-</html>
+            // Listen for auth changes
+            supabase.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_IN') {
+                    currentUser = session.user;
+                    showApp();
+                } else if (event === 'SIGNED_OUT') {
+                    currentUser = null;
+                    showAuth();
+                }
+            });
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const { error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (error) throw error;
+                
+                showMessage('Login successful!', 'success');
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            try {
+                const { error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: name
+                        }
+                    }
+                });
+
+                if (error) throw error;
+                
+                showMessage('Account created! Please check your email for verification.', 'success');
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        }
+
+        async function handleLogout() {
+            await supabase.auth.signOut();
+        }
+
+        function showMessage(message, type) {
+            authMessage.innerHTML = `<div class="${type}-message">${message}</div>`;
+            setTimeout(() => {
+                authMessage.innerHTML = '';
+            }, 5000);
+        }
+
+        // Student Management Functions
+        async function loadStudents() {
+            try {
+                studentsContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading students...</div>';
+                
+                const { data, error } = await supabase
+                    .from('students')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                students = data || [];
+                renderStudents();
+            } catch (error) {
+                console.error('Error loading students:', error);
+                studentsContainer.innerHTML = '<div class="error-message">Error loading students. Please try again.</div>';
+            }
+        }
+
+        function renderStudents() {
+            if (students.length === 0) {
+                studentsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary); grid-column: 1 / -1;">
+                        <i class="fas fa-user-graduate" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i
